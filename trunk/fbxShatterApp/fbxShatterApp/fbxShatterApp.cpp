@@ -222,6 +222,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	std::cout << "OutputMesh Polygon Count: " << outputMesh->GetPolygonCount ()<<std::endl;
+	std::cout << "OutputMesh GetPolygonSize Count: " << outputMesh->GetPolygonSize (0)<<std::endl;
 	KFbxVector4* op_CP = outputMesh->GetControlPoints();
 
 	std::cout << op_CP[0][0] << " " << op_CP[0][1] << " " << op_CP[0][2] << std::endl;
@@ -279,10 +280,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//save to scene
 
 	outPutNode = KFbxNode::Create(SdkManager, "");
-	outPutNode->AddNodeAttribute(outputMesh);
+	assert(outPutNode->AddNodeAttribute(outputMesh));
 	std::cout << "outPutNode Attribute Count: " << outPutNode->GetNodeAttributeCount ()<<std::endl;
-
-	outPutScene->AddRootMember(outPutNode);
+	KFbxNode *temproot = outPutScene->GetRootNode();
+	assert(temproot->AddChild(outPutNode));
 	   
 	Result = SaveScene(SdkManager,outPutScene, "Shatter.fbx", -1, false);
 
