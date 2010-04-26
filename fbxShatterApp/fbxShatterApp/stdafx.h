@@ -17,6 +17,8 @@
 #include <fstream>
 #include <cassert>
 
+#include <cstdlib>
+#include <ctime> 
 
 // includes for defining the Voronoi diagram adaptor
 #include <CGAL/Cartesian.h>
@@ -25,8 +27,7 @@
 
 //#include <>
 //#include <CGAL/Delaunay_triangulation_traits_2.h>
-#include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Polygon_2.h>
+
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -70,8 +71,11 @@ typedef DTtrait::Point                                                     DTPoi
 
 typedef CGAL::Point_2<KernelCD>                             CDPoint_2;
 typedef CGAL::Ray_2<KernelCD>                               CDRay_2;
+typedef CGAL::Segment_2 <KernelCD>                      CDSegment_2;
+typedef CGAL::Direction_2 <KernelCD>                      CDDirection_2;
+typedef CGAL::Vector_2<KernelCD>                           CDVector_2;
 
-typedef CGAL::Polygon_2<K>                           CDPolygon_2;
+typedef CGAL::Polygon_2<K>                                     CDPolygon_2;
 
 //////////Polygon
 //#include <CGAL/Cartesian.h>
