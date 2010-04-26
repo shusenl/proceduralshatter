@@ -7,15 +7,27 @@
 
 #include "targetver.h"
 
-#include <fbxsdk.h>
-
-
-#include <CGAL/basic.h>
-
 // standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
+
+#include <cstdlib>
+#include <ctime> 
+#include <vector>
+
+#include <stdio.h>
+#include <tchar.h>
+
+
+#include <fbxsdk.h>
+
+//fbx wrapper and obj
+#include "Fbx.h"
+
+
+#include <CGAL/basic.h>
+
 
 #include <cstdlib>
 #include <ctime> 
@@ -91,14 +103,7 @@ typedef CGAL::Polygon_2<K>                                     CDPolygon_2;
 
 
 
-#include <fstream>
 
-
-
-
-#include <iostream>
-#include <stdio.h>
-#include <tchar.h>
 
 
 
