@@ -73,14 +73,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	std::vector<CDSegment_2> segmentList;
-	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[0][0], p_CP[0][2]), 	CDPoint_2(p_CP[1][0], p_CP[1][2]))  );
+	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[0][0], p_CP[0][2]), 	CDPoint_2(p_CP[2][0], p_CP[2][2]))  );
 
-	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[1][0], p_CP[1][2]), 	CDPoint_2(p_CP[3][0], p_CP[3][2]))  );
+	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[2][0], p_CP[2][2]), 	CDPoint_2(p_CP[3][0], p_CP[3][2]))  );
 
-	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[3][0], p_CP[3][2]),	CDPoint_2(p_CP[2][0], p_CP[2][2]))  );
+	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[3][0], p_CP[3][2]),	CDPoint_2(p_CP[1][0], p_CP[1][2]))  );
 
-	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[2][0], p_CP[2][2]), 	CDPoint_2(p_CP[0][0], p_CP[0][2]))  );
+	segmentList.push_back(  CDSegment_2(CDPoint_2(p_CP[1][0], p_CP[1][2]), 	CDPoint_2(p_CP[0][0], p_CP[0][2]))  );
 	
+	CDIsoRectangle_2 isoRect(CDPoint_2(p_CP[3][0], p_CP[3][2]),  CDPoint_2(p_CP[0][0], p_CP[0][2]));
 	//std::cout<< segmentList << std::endl;
 
 	VD vd;
@@ -94,10 +95,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	vd.insert(t3);
 	vd.insert(t4);
 	vd.insert(t5);
-	//vd.insert(Site_2(3.66, 0.1));
+	vd.insert(Site_2(3.66, 0.1));
 	//vd.insert(Site_2(3.2, 3.1));
 	//vd.insert(Site_2(1.4, 1.1));
-	//vd.insert(Site_2(-1.3, 2.1));
+	vd.insert(Site_2(-1.3, 2.1));
 	//vd.insert(Site_2(-5.3, -4.1));
 	//vd.insert(Site_2(-3.9, -0.1));
 	//for(int i=-3; i<4; i++)
@@ -152,9 +153,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::vector<KFbxVector4> polygonPoints;
 			std::vector<KFbxVector4>::iterator it;
 			
+			bool alreadyGetUnboundEdge = false;
+			int firstIntersectEdge = 0;
+			int secondIntersectEdge = 0;
+			std::vector<CDSegment_2>::iterator firstIntersectSegIt;
+
+
 			do
 			{
-
 				//if(!hE.is_valid())
 				//	std::cout<<"half edge is not valid!" <<std::endl;
 
@@ -175,14 +181,6 @@ int _tmain(int argc, _TCHAR* argv[])
 						raybase = temp;
 						std::cout<<"Source : "<< raybase << std::endl;
 
-						//CDPoint_2 
-						//	midpoint( 
-						//	(c_halfedge->up()->point().x() + c_halfedge->up()->point().x())/2.0,
-						//	(c_halfedge->down()->point().y() + c_halfedge->down()->point().y())/2.0
-						//	);
-						//rayV = midpoint;
-						//std::cout<<"Midpoint: " << midpoint << std::endl;
-
 						CDPoint_2 up(c_halfedge->up()->point().x(),c_halfedge->up()->point().y());
 						CDPoint_2 down(c_halfedge->down()->point().x(), c_halfedge->down()->point().y());
 
@@ -193,19 +191,12 @@ int _tmain(int argc, _TCHAR* argv[])
 						std::cout<<"Up: " << up << "   Down: " << down << std::endl;
 
 					}
-					if(c_halfedge->has_target())
+					else if(c_halfedge->has_target())
 					{
 						CDPoint_2 temp( c_halfedge->target()->point().x(), c_halfedge->target()->point().y()) ;
 						raybase = temp;
 						std::cout<<"Target : "<< raybase << std::endl;
 						//calculate the mid point of two nearby site
-
-						//CDPoint_2 
-						//	midpoint( 
-						//	(c_halfedge->up()->point().x() + c_halfedge->down()->point().x())/2.0,
-						//	(c_halfedge->up()->point().y() + c_halfedge->down()->point().y())/2.0
-						//	);
-						//rayV = midpoint;
 
 						//because this halfedge has target so, switch up and down
 						CDPoint_2 down(c_halfedge->up()->point().x(),c_halfedge->up()->point().y());
@@ -220,37 +211,114 @@ int _tmain(int argc, _TCHAR* argv[])
 					}
 					//calculate the intersection
 					const CDPoint_2 *intersectPoint;
+					const CDSegment_2 *intersectSeg;
 
 					CDRay_2 ray(raybase, rayVector.direction () );
 					assert( !ray.is_degenerate () );
 
-					std::vector<CDSegment_2>::iterator segit = segmentList.begin();
-					
+
 					//intersection object 
 					std::cout << "Calculate Intersection =====================" << std::endl;
 					CGAL::Object obj;
-					for(; segit != segmentList.end(); segit++)
+
+					std::vector<CDSegment_2>::iterator segit = segmentList.begin();
+
+					//obj = intersection(isoRect, ray);
+					if(!alreadyGetUnboundEdge)
 					{
-						obj = intersection(ray, *segit);
-						if ( intersectPoint = CGAL::object_cast<CDPoint_2>(&obj)) 
+						//segit = segmentList.begin();
+						for(; segit != segmentList.end(); segit++)
 						{
-							std::cout<< "Intersect At: "<< *intersectPoint <<"\n\n"<< std::endl;
-							KFbxVector4 P(intersectPoint->x(), intersectPoint->y(), 0, 0);
-							polygonPoints.push_back(P);
-							break;
+							firstIntersectEdge++;
+							obj = intersection(ray, *segit);
+							if ( intersectPoint = CGAL::object_cast<CDPoint_2>(&obj)) 
+							{
+								std::cout<< "Intersect At: "<< *intersectPoint <<"\n\n"<< std::endl;
+								KFbxVector4 P(intersectPoint->x(), intersectPoint->y(), 0, 0);
+								polygonPoints.push_back(P);
+								firstIntersectSegIt = segit;
+								break;
+							}
 						}
+
+						assert(firstIntersectSegIt.operator ->());
+						alreadyGetUnboundEdge = true;
+
 					}
+					else
+					{
+						KFbxVector4 P;
+						segit = segmentList.begin();
+						for(; segit != segmentList.end(); segit++)
+						{
+							secondIntersectEdge++;
+							obj = intersection(ray, *segit);
+							if ( intersectPoint = CGAL::object_cast<CDPoint_2>(&obj)) 
+							{
+								std::cout<< "Intersect At: "<< *intersectPoint <<"\n\n"<< std::endl;
+								P.Set(intersectPoint->x(), intersectPoint->y(), 0, 0);
+								//polygonPoints.push_back(P);
+								break;
+							}
+						}
+						
+						//segit--;
+
+						
+						//if(abs(isoRect.xmin() == intersectPoint->x()) < 1e-5)
+						//	secondIntersectEdge = 1;
+						//else if(abs(isoRect.ymax() - intersectPoint->y()) < 1e-5)
+						//	secondIntersectEdge = 2;
+						//else if(abs(isoRect.xmax() == intersectPoint->x()) < 1e-5)
+						//	secondIntersectEdge = 3;
+						//else if(abs(isoRect.ymax() == intersectPoint->y()) < 1e-5)
+						//	secondIntersectEdge = 4;
+						
+
+						assert(firstIntersectEdge != 0);
+						assert(secondIntersectEdge != 0);
+//%%%%%%%Logic Error 
+						if(abs(firstIntersectEdge - secondIntersectEdge) == 1 
+							|| abs(firstIntersectEdge - secondIntersectEdge) == 3 )  
+							//means they are across the adjacent boundary
+						{
+							//assert(firstIntersectSegIt.operator->() );
+							std::cout <<"1 vertex to INSERT!! "<< "firstIntersectEdge: "<< firstIntersectEdge << "     secondIntersectEdge: " << secondIntersectEdge <<std::endl;
+							std::cout <<"|||||||||||||||| " << firstIntersectSegIt->target() << std::endl;
+							polygonPoints.push_back(KFbxVector4(firstIntersectSegIt->target().x(), firstIntersectSegIt->target().y(), 0, 0) );
+						}
+						else if(abs(firstIntersectEdge - secondIntersectEdge) == 2)
+						{
+							//assert(firstIntersectSegIt.operator->() );
+							std::cout <<"2 vertex to INSERT!! "<< "firstIntersectEdge: "<< firstIntersectEdge << "     secondIntersectEdge: " << secondIntersectEdge <<std::endl;
+							std::cout <<"|||||||||||||||| " << firstIntersectSegIt->target();
+							polygonPoints.push_back(KFbxVector4(firstIntersectSegIt->target().x(), firstIntersectSegIt->target().y(), 0, 0) );
+							if(firstIntersectSegIt != segmentList.end())
+								firstIntersectSegIt++;
+							else
+								firstIntersectSegIt = segmentList.begin();
+							std::cout << "||||||||||||||"<< firstIntersectSegIt->target()<< std::endl;
+							polygonPoints.push_back(KFbxVector4(firstIntersectSegIt->target().x(), firstIntersectSegIt->target().y(), 0, 0) );
+
+						}
+
+						polygonPoints.push_back(P);
+
+					}
+					
+		
+
 
 				
 				}
 				else
 				{
 					//for the bounded halfedge
-				KFbxVector4 P1(c_halfedge->source()->point().x(), c_halfedge->source()->point().y(), 0, 0);
-				polygonPoints.push_back(P1);
+					KFbxVector4 P1(c_halfedge->source()->point().x(), c_halfedge->source()->point().y(), 0, 0);
+					polygonPoints.push_back(P1);
 
-				KFbxVector4 P2(c_halfedge->target()->point().x(), c_halfedge->target()->point().y(), 0, 0);
-				polygonPoints.push_back(P2);
+					KFbxVector4 P2(c_halfedge->target()->point().x(), c_halfedge->target()->point().y(), 0, 0);
+					polygonPoints.push_back(P2);
 				
 				}
 				c_halfedge++;
@@ -258,16 +326,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			while (c_halfedge != c_halfedge_first);
 			
-			//build polygon
-			//outputMesh->BeginPolygon();
-			//for (it = polygonPoints.begin(); it != polygonPoints.end(); it++, i++)
-			//{
-			//	outputMesh->SetControlPointAt((*it), i);
-			//	outputMesh->AddPolygon(i);
-			//}
-			//outputMesh->EndPolygon();
-			//outputMesh->BuildMeshEdgeArray();
-			fbx.addPolygonObjectToScene(polygonPoints);				
+			//fbx.addPolygonObjectToScene(polygonPoints);				
 		}
 		else //bounded case
 		{
@@ -278,13 +337,62 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::vector<KFbxVector4>::iterator it;
 
 			//divided into two case
-			//if(face_in)
-			//{
-			//}
-			
 			do
 			{
 				//c_halfedge->source()->point();
+
+				//point is outside the boundary
+				if(c_halfedge->source()->point().x() > isoRect.xmax() || c_halfedge->source()->point().x() < isoRect.xmin() ||
+				   c_halfedge->source()->point().y() > isoRect.ymax() || c_halfedge->source()->point().y() < isoRect.ymin())
+				{
+					CDPoint_2 pTarget = CDPoint_2(c_halfedge->target()->point().x(), c_halfedge->target()->point().y());
+					CDPoint_2  pSource =  CDPoint_2(c_halfedge->source()->point().x(), c_halfedge->source()->point().y());
+
+					CDSegment_2 segTemp = CDSegment_2(pSource, pTarget);
+					
+					CGAL::Object obj;
+					const CDPoint_2 *intersectPoint;
+					KFbxVector4 P;
+					std::vector<CDSegment_2>::iterator segit = segmentList.begin();
+					for(; segit != segmentList.end(); segit++)
+					{
+						obj = intersection(segTemp, *segit);
+						if ( intersectPoint = CGAL::object_cast<CDPoint_2>(&obj)) 
+						{
+							std::cout<< "@@@Intersect At: "<< *intersectPoint <<"\n\n"<< std::endl;
+							P.Set(intersectPoint->x(), intersectPoint->y(), 0, 0);
+							polygonPoints.push_back(P);
+							break;
+						}
+					}
+				}
+
+
+				//point is outside the boundary
+				if(c_halfedge->target()->point().x() > isoRect.xmax() || c_halfedge->target()->point().x() < isoRect.xmin() ||
+					c_halfedge->target()->point().y() > isoRect.ymax() || c_halfedge->target()->point().y() < isoRect.ymin())
+				{
+					CDPoint_2 pTarget = CDPoint_2(c_halfedge->target()->point().x(), c_halfedge->target()->point().y());
+					CDPoint_2  pSource =  CDPoint_2(c_halfedge->source()->point().x(), c_halfedge->source()->point().y());
+
+					CDSegment_2 segTemp = CDSegment_2(pSource, pTarget);
+
+					CGAL::Object obj;
+					const CDPoint_2 *intersectPoint;
+					KFbxVector4 P;
+					std::vector<CDSegment_2>::iterator segit = segmentList.begin();
+					for(; segit != segmentList.end(); segit++)
+					{
+						obj = intersection(segTemp, *segit);
+						if ( intersectPoint = CGAL::object_cast<CDPoint_2>(&obj)) 
+						{
+							std::cout<< "@@@Intersect At: "<< *intersectPoint <<"\n\n"<< std::endl;
+							P.Set(intersectPoint->x(), intersectPoint->y(), 0, 0);
+							polygonPoints.push_back(P);
+							break;
+						}
+					}
+				}
 
 				KFbxVector4 P(c_halfedge->source()->point().x(), c_halfedge->source()->point().y(), 0, 0);
 				polygonPoints.push_back(P);
@@ -294,16 +402,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			while (c_halfedge != c_halfedge_first);
 			
-			//outputMesh->BeginPolygon();
-			//for (it = polygonPoints.begin(); it != polygonPoints.end(); it++, i++)
-			//{
-			//	outputMesh->SetControlPointAt((*it), i);
-			//	outputMesh->AddPolygon(i);
-			//}
-			//outputMesh->EndPolygon();
-			//outputMesh->BuildMeshEdgeArray();
-			fbx.addPolygonObjectToScene(polygonPoints);
 
+			fbx.addPolygonObjectToScene(polygonPoints);
 			
 		}
 	}

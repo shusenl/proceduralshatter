@@ -40,7 +40,7 @@
 //#include <>
 //#include <CGAL/Delaunay_triangulation_traits_2.h>
 
-
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Voronoi_diagram_2.h>
@@ -66,6 +66,7 @@ typedef VD::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
 
 
 //use DT's dual to calculate VD
+//typedef CGAL::Cartesian<double> KernelCD;
 typedef CGAL::Cartesian<double> KernelCD;
 typedef CGAL::Ray_2<KernelCD> Ray;
 typedef CGAL::Line_2<KernelCD> Line;
@@ -86,7 +87,7 @@ typedef CGAL::Ray_2<KernelCD>                               CDRay_2;
 typedef CGAL::Segment_2 <KernelCD>                      CDSegment_2;
 typedef CGAL::Direction_2 <KernelCD>                      CDDirection_2;
 typedef CGAL::Vector_2<KernelCD>                           CDVector_2;
-
+typedef CGAL::Iso_rectangle_2<KernelCD>                CDIsoRectangle_2;
 typedef CGAL::Polygon_2<K>                                     CDPolygon_2;
 
 //////////Polygon
