@@ -221,7 +221,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-<<<<<<< .mine
 				RelativePath=".\Fbx.h"
 				>
 			</File>
@@ -230,12 +229,6 @@
 				>
 			</File>
 			<File
-=======
-				RelativePath=".\FbxSceneWrapper.h"
-				>
-			</File>
-			<File
->>>>>>> .r7
 				RelativePath=".\stdafx.h"
 				>
 			</File>
