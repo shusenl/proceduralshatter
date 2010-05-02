@@ -48,8 +48,8 @@
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
 
 // typedefs for defining the adaptor
-typedef CGAL::Exact_predicates_inexact_constructions_kernel                                    K;
-typedef CGAL::Delaunay_triangulation_2<K>                                                                DT;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel                                    KernelCD;
+typedef CGAL::Delaunay_triangulation_2<KernelCD>                                                                DT;
 typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DT>                                 AT;
 typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT> AP;
 typedef CGAL::Voronoi_diagram_2<DT,AT,AP>                                                           VD;
@@ -67,7 +67,7 @@ typedef VD::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
 
 //use DT's dual to calculate VD
 //typedef CGAL::Cartesian<double> KernelCD;
-typedef CGAL::Cartesian<double> KernelCD;
+//typedef CGAL::Cartesian<double> KernelCD;
 typedef CGAL::Ray_2<KernelCD> Ray;
 typedef CGAL::Line_2<KernelCD> Line;
 typedef CGAL::Segment_2<KernelCD> Segment;
@@ -88,7 +88,7 @@ typedef CGAL::Segment_2 <KernelCD>                      CDSegment_2;
 typedef CGAL::Direction_2 <KernelCD>                      CDDirection_2;
 typedef CGAL::Vector_2<KernelCD>                           CDVector_2;
 typedef CGAL::Iso_rectangle_2<KernelCD>                CDIsoRectangle_2;
-typedef CGAL::Polygon_2<K>                                     CDPolygon_2;
+typedef CGAL::Polygon_2<KernelCD>                                     CDPolygon_2;
 
 //////////Polygon
 //#include <CGAL/Cartesian.h>
