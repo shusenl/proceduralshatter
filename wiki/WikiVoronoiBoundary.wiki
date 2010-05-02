@@ -1,0 +1,6 @@
+for each unbounded face: (in 2D voronoi diagram)
+  for each half edge:
+    if edge is unbounded:
+    
+    else
+     
