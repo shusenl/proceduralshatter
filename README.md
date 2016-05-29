@@ -9,4 +9,4 @@ Feature : Voronoi based shatter effects for offline/realtime rendering. FBX SDK 
 ![Partilce Guided](https://github.com/shusenl/proceduralshatter/blob/master/img/anisotropic.png "Particle Guided:")
 ![Partilce Guided](https://github.com/shusenl/proceduralshatter/blob/master/img/demo.png "Particle Guided:")
 
-Disclaim: This is a final project for computational geometry class at University of Utah(cs6160), so the code reliability and usability is not guaranteed.
+Disclaim: This is a class project for computational geometry class at University of Utah(cs6160), so the code reliability and usability is not guaranteed.
