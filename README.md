@@ -1,5 +1,9 @@
 # proceduralshatter
-Automatically exported from code.google.com/p/proceduralshatter
+This is a class project from 2010. Automatically exported from code.google.com/p/proceduralshatter
+
+For more details:
+https://docs.google.com/presentation/d/1YMtfc-wbYNAZsXEp4OZbpCKNi7zngfWHH4WjmM1_mIA/edit?usp=sharing
+
 
 The program is intended to be a stand alone application that can be used in a Visual Effect Pipeline. It utilize the FBX SDK to parse the scene file, and CGAL for computing the voronoi diagrams.
 
